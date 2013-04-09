@@ -3,7 +3,7 @@ Background@CHEATS_PANEL:
 	X:(WINDOW_RIGHT - WIDTH)/2
 	Y:(WINDOW_BOTTOM - HEIGHT)/2
 	Width:350
-	Height:475
+	Height:520
 	Visible:true
 	Children:
 		Label@LABEL_TITLE:
@@ -99,9 +99,15 @@ Background@CHEATS_PANEL:
 			Height:20
 			Text: Force Desync
 			Height:25
+		Checkbox@SHOW_FLOWFIELD:
+			X:30
+			Y:410
+			Width:PARENT_RIGHT - 30
+			Height:20
+			Text:Show FlowField
 		Button@CLOSE:
 			X:30
-			Y:420
+			Y:450
 			Width:PARENT_RIGHT - 60
 			Height:25
 			Text:Close

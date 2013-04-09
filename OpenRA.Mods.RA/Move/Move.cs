@@ -40,7 +40,18 @@ namespace OpenRA.Mods.RA.Move
 
 		public Move(CPos destination, int nearEnough)
 		{
-			this.getPath = (self,mobile) => self.World.WorldActor.Trait<PathFinder>().FindUnitPath( mobile.toCell, destination, self );
+			this.getPath = (self,mobile) =>
+			{
+					if (self.Info.Name == "jeep")
+					{
+						return self.World.WorldActor.Trait<FlowFieldPathFinder>().FindUnitPath(mobile.toCell, destination, self);
+					}
+					else
+					{
+						return self.World.WorldActor.Trait<PathFinder>().FindUnitPath( mobile.toCell, destination, self );
+					}
+			};
+
 			this.destination = destination;
 			this.nearEnough = nearEnough;
 		}

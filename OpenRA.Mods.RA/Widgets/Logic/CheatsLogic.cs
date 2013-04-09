@@ -118,6 +118,17 @@ namespace OpenRA.Mods.RA.Widgets.Logic
 				desync.OnClick = () => TriggerDesync(world);
 			}
 
+			var flowFieldOverlay = world.WorldActor.TraitOrDefault<FlowFieldOverlay>();
+			var showFlowFieldCheckbox = widget.Get<CheckboxWidget>("SHOW_FLOWFIELD");
+			if (showFlowFieldCheckbox != null)
+			{
+				showFlowFieldCheckbox.IsChecked = () => flowFieldOverlay != null ? flowFieldOverlay.Visible : false;
+				showFlowFieldCheckbox.OnClick = () => {  if (flowFieldOverlay != null) flowFieldOverlay.Visible ^= true;  };
+			}
+
+			widget.Get<ButtonWidget>("CLOSE").OnClick = () => { Ui.CloseWindow(); onExit(); };
+
+
 			var close = widget.GetOrNull<ButtonWidget>("CLOSE");
 			if (close != null)
 				close.OnClick = () => { Ui.CloseWindow(); onExit(); };
@@ -141,6 +152,7 @@ namespace OpenRA.Mods.RA.Widgets.Logic
 					f.SetValue(trait, CosmeticRandom.Next(Int32.MaxValue));
 				else
 					Game.AddChatLine(Color.White, "Debug", "Sorry, Field-Type not implemented. Try again!");
+
 
 				var after = f.GetValue(trait);
 				Game.AddChatLine(Color.White, "Debug", "Type: {0}\nField: ({1}) {2}\nBefore: {3}\nAfter: {4}"

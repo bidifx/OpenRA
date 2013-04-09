@@ -615,6 +615,7 @@ World:
 		Types:cr1,cr2,cr3,cr4,cr5,cr6
 		Depths:5,5,5,5,5,5
 	DebugOverlay:
+	FlowFieldOverlay:
 	SpawnMapActors:
 	CreateMPPlayers:
 	MPStartLocations:
@@ -626,6 +627,7 @@ World:
 	PathFinder:
 	ValidateOrder:
 	DebugPauseState:
+	FlowFieldPathFinder:
 
 MINP:
 	Mine:
