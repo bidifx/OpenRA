@@ -43,9 +43,47 @@ namespace OpenRA.Mods.RA.Move
 		public List<CPos> FindUnitPath(CPos from, CPos target, Actor self)
 		{
 			var mi = self.Info.Traits.Get<MobileInfo>();
+			var mapBounds = world.Map.Bounds;
+
+			var field = new double[world.Map.MapSize.X, world.Map.MapSize.Y];
+
+
+			var length_weigth = 1.0;
+			var time_weight = 1.0;
+			var avoid_weight = 1.0;
+
+			Func<CPos,double> v = (_) => 1.0;
+			Func<CPos,double> a = (cell) => mi.CanEnterCell(world, self, cell, null, false, false) ? 0 : 1;
+
+			var max = 0d;
+
+			for (int x = 0; x < world.Map.MapSize.X; x++)
+			{
+				for (int y = 0; y < world.Map.MapSize.Y; y++)
+				{
+					var cell = new CPos(x,y);
+					var c = ( length_weigth*v(cell) + time_weight + avoid_weight*a(cell) ) / v(cell);
+
+					c  *= Math.Sqrt(Math.Pow(from.X-x,2) + Math.Pow((from.Y-y),2));
+					if (c > max) max = c;
+					field[x,y] = c;
+				}
+			}
+
+
+
+
+			for (int x = 0; x < world.Map.MapSize.X; x++)			
+				for (int y = 0; y < world.Map.MapSize.Y; y++)
+					field[x,y] /= max;
+
+
+
+			var res = new List<CPos>();
+
+			/*
 			var x = from.X;
 			var y = from.Y;
-			var res = new List<CPos>();
 
 			res.Add(new CPos(from.X,from.Y));
 			while (x != target.X || y != target.Y)
@@ -59,10 +97,14 @@ namespace OpenRA.Mods.RA.Move
 
 			}
 
+*/
 
-
-
-			res.Reverse();
+			var overlay = world.WorldActor.TraitOrDefault<FlowFieldOverlay>();
+			if (overlay != null)
+			{
+				overlay.AddFlowField(self, field);
+			}
+//			res.Reverse();
 			return res;
 		}
 	}

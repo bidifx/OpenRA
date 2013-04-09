@@ -104,7 +104,7 @@ Background@CHEATS_PANEL:
 			Y:410
 			Width:PARENT_RIGHT - 30
 			Height:20
-			Text:Show FlowField
+			Text:Show FlowField of selected Actor
 		Button@CLOSE:
 			X:30
 			Y:450

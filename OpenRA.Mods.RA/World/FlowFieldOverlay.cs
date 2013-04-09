@@ -20,14 +20,13 @@ namespace OpenRA.Mods.RA
 		World world;
 		public bool Visible;
 
+		Dictionary<Actor, double[,]> flowFields;
 
-		List<List<CPos>> regions;
-		Color[] colors = {Color.Green, Color.Blue, Color.Black, Color.Purple, Color.Yellow, Color.Red, Color.Fuchsia, Color.Azure, Color.White, Color.Coral};
 		public void WorldLoaded(World w)
 		{
 			this.world = w;
 			this.refreshTick = 0;
-			this.regions = new List<List<CPos>>();
+			this.flowFields = new Dictionary<Actor, double[,]>();
 
 			//this.layers = new Dictionary<Player, int[,]>(8);
 			// Enabled via Cheats menu
@@ -49,14 +48,18 @@ namespace OpenRA.Mods.RA
 				layer[p.First.X, p.First.Y] = Math.Min(128, (layer[p.First.X, p.First.Y]) + ((maxWeight - p.Second) * 64 / maxWeight));
 		}*/
 
-		public void AddRegion(List<CPos> region)
+		public void AddFlowField(Actor self, double[,] flowField)
 		{
-			regions.Add(region);
+			flowFields[self] = flowField;
 		}
 
 		public void Render(WorldRenderer wr)
 		{
 			if (!Visible) return;
+			if (world.Selection.Actors.Count() != 1) return;
+			if (!flowFields.ContainsKey(world.Selection.Actors.First())) return;
+
+			var flowField = flowFields[world.Selection.Actors.First()];
 
 			var qr = Game.Renderer.WorldQuadRenderer;
 			bool doDim = refreshTick - world.FrameNumber <= 0;
@@ -65,25 +68,23 @@ namespace OpenRA.Mods.RA
 			var viewBounds = Game.viewport.WorldBounds(world);
 			var mapBounds = world.Map.Bounds;
 
-			var col = 0;
-			foreach (var region in regions)
+
+			for (var x = 0; x < flowField.GetLength(0); x++)
 			{
-				//Console.WriteLine("Render region: {0}".F(region.Count));
-				if (col>=colors.Length) col = 0;
-				Color color = colors[col];
-
-
-				foreach (var cell in region)
+				for (var y = 0; y < flowField.GetLength(1); y++)
 				{
+
+					var cell = new CPos(x,y);
 					if (!viewBounds.Contains(cell.X, cell.Y))
 						continue;
 
+					var value = flowField[x,y];
+					var w = Math.Max(0, Math.Min(((int)value)*128, 128));
 					var ploc = cell.ToPPos();
-					qr.FillRect(new RectangleF(ploc.X, ploc.Y, Game.CellSize, Game.CellSize), Color.FromArgb(128, color));				
+					qr.FillRect(new RectangleF(ploc.X, ploc.Y, Game.CellSize, Game.CellSize), Color.FromArgb(w, Color.Red));				
 				}
-
-				col++;
 			}
+
 
 			/*foreach (var pair in layers)
 			{
