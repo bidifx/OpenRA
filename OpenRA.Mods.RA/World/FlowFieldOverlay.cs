@@ -79,7 +79,7 @@ namespace OpenRA.Mods.RA
 						continue;
 
 					var value = flowField[x,y];
-					var w = Math.Max(0, Math.Min(((int)value)*128, 128));
+					var w = Math.Max(0, Math.Min((int)(value*200), 200));
 					var ploc = cell.ToPPos();
 					qr.FillRect(new RectangleF(ploc.X, ploc.Y, Game.CellSize, Game.CellSize), Color.FromArgb(w, Color.Red));				
 				}
